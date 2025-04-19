@@ -27,12 +27,17 @@ npm install ai-agent-flow
 
 ## 💡 How It Works
 
+<details>
+<summary>💡 Chatbot Example Flow (Click to expand)</summary>
+
 ```mermaid
 flowchart TD
   A[Start Node (LLMNode)] -->|default| B[DecisionNode]
-  B -->|weather| C[ActionNode: Fetch Weather]
-  B -->|default| D[ActionNode: Fallback]
+  B -->|weather| C[Weather ActionNode]
+  B -->|default| D[Fallback ActionNode]
 ```
+
+</details>
 
 - **Nodes**: Smallest executable units (call LLM, run logic)
 - **Flows**: Connect nodes with action-based transitions
@@ -146,7 +151,7 @@ npm test
 
 Full API reference available via TypeDoc:
 
-- 📘 [View the Docs](https://EunixTech.github.io/ai-agent-flow)
+- 📘️ [View the Docs](https://EunixTech.github.io/ai-agent-flow)
 
 You can also build docs locally:
 
@@ -174,18 +179,18 @@ open ./docs/index.html
 
 ---
 
-## 🧭 Roadmap
+## 🛝 Roadmap
 
 | Phase         | Features                                |
 | ------------- | --------------------------------------- |
 | ✅ Now        | Full engine + nodes + OpenAI + examples |
-| 🔜 Short-term | Anthropic support, CLI tool, Prometheus |
+| 🕸️ Short-term | Anthropic support, CLI tool, Prometheus |
 | 🧠 Mid-term   | Visual editor, plugin API, Redis bus    |
-| 🛰️ Long-term  | Distributed agents, LLM auto-routing    |
+| 🚁️ Long-term | Distributed agents, LLM auto-routing    |
 
 ---
 
-## 🧰 Contributing
+## 🛠️ Contributing
 
 ```bash
 git clone https://github.com/EunixTech/ai-agent-flow
@@ -205,7 +210,7 @@ MIT © 2025 [Rajesh Dhiman](https://www.rajeshdhiman.in)
 
 ## 💬 Contact
 
-Open issues or reach out here:
+Open issues or reach out here:  
 👉 [https://www.rajeshdhiman.in/contact](https://www.rajeshdhiman.in/contact)
 
 > "Build agent flows like LEGO blocks — simple, powerful, and easy to debug."
