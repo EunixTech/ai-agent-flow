@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Optional: show message
+echo "🔍 Running Pre-commit checks..."
+
+# Run lint-staged (auto-format + lint only staged files)
+npx lint-staged
