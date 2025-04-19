@@ -37,6 +37,13 @@ flowchart TD
   B -->|default| D[Fallback ActionNode]
 ```
 
+```mermaid
+graph TD
+  A[Start Node (LLMNode)] -->|default| B{Decision}
+  B -- Yes --> C[ActionNode]
+  B -- No --> D[End]
+```
+
 </details>
 
 - **Nodes**: Smallest executable units (call LLM, run logic)
