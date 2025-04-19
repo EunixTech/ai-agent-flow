@@ -1,0 +1,10 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts", "src/types.ts"],
+  "out": "docs/api",
+  "theme": "default-modern",
+  "plugin": ["@typhonjs-typedoc/typedoc-theme-dmt"],
+  "highlightLanguages": ["ts", "json", "bash", "mermaid"],
+  "excludePrivate": true,
+  "includeVersion": true
+}
