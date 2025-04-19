@@ -27,8 +27,7 @@ npm install ai-agent-flow
 
 ## 💡 How It Works
 
-<details>
-<summary>💡 Chatbot Example Flow (Click to expand)</summary>
+### 💡 Chatbot Example Flow (Click to expand)
 
 ```mermaid
 flowchart TD
@@ -36,8 +35,6 @@ flowchart TD
   B -->|weather| C[Weather ActionNode]
   B -->|default| D[Fallback ActionNode]
 ```
-
-</details>
 
 - **Nodes**: Smallest executable units (call LLM, run logic)
 - **Flows**: Connect nodes with action-based transitions
