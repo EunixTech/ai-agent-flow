@@ -32,16 +32,9 @@ npm install ai-agent-flow
 
 ```mermaid
 flowchart TD
-  A[Start Node (LLMNode)] -->|default| B[DecisionNode]
+  A[Start] -->|default| B[DecisionNode]
   B -->|weather| C[Weather ActionNode]
   B -->|default| D[Fallback ActionNode]
-```
-
-```mermaid
-graph TD
-  A[Start Node (LLMNode)] -->|default| B{Decision}
-  B -- Yes --> C[ActionNode]
-  B -- No --> D[End]
 ```
 
 </details>
