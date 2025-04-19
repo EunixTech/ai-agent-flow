@@ -1,9 +1,0 @@
-# Don't lint these folders/files
-node_modules/
-coverage/
-dist/
-docs/
-*.md
-*.html
-package-lock.json
-package.json
