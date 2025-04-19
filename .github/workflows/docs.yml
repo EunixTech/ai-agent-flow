@@ -1,4 +1,4 @@
-name: Deploy Docs to GitHub Pages
+name: Deploy Docs
 
 on:
   push:
@@ -6,14 +6,22 @@ on:
       - main
 
 permissions:
-  contents: write # 👈 Required for gh-pages push
+  contents: write
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.10.0
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Build docs
         run: npm run docs:build
