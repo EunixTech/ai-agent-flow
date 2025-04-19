@@ -1,0 +1,15 @@
+# Ignore everything except dist, README, LICENSE, package.json
+src/
+tests/
+docs/
+examples/
+coverage/
+typedoc.json
+tsconfig.json
+.eslintrc.*
+.eslintignore
+.prettierrc
+.husky/
+.vscode/
+*.md~      # backups
+*.log
