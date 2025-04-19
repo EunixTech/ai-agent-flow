@@ -10,14 +10,14 @@
 
 - 🔄 **Composable Node-based Flows**: Build AI workflows using LLM, decision, batch, and custom logic nodes
 - 🧠 **AI-first Architecture**: Native OpenAI support with persistent prompt history
-- 📡 **Multi-agent Messaging**: Event-driven agent communication via `MessageBus`
+- 📱 **Multi-agent Messaging**: Event-driven agent communication via `MessageBus`
 - 📊 **Built-in Observability**: Winston logging and Prometheus-compatible metrics
 - 🔌 **Extensible Plugin System**: Add new nodes, providers, and context stores
 - 🔐 **Typed and Robust**: Full TypeScript support with retries, error handling, and shared context
 
 ---
 
-## 📦 Installation
+## 🛆 Installation
 
 ```bash
 npm install ai-agent-flow
@@ -41,6 +41,43 @@ flowchart TD
 - **Context**: Shared memory between nodes with data, metadata, and history
 - **Runner**: Executes flows and handles retries/errors
 - **Agents**: Flows + state + messaging capabilities
+
+### 🤖 Agent Messaging Flow
+
+```mermaid
+flowchart TD
+  A[Support Agent] -->|request| B[Billing Agent]
+  B -->|response| A
+```
+
+### 📦 Data Pipeline Processing
+
+```mermaid
+flowchart TD
+  A[BatchNode: Loop over users] --> B[ActionNode: Check eligibility]
+  B --> C[Store in context]
+```
+
+### ♻️ Retry Flow for Error Handling
+
+```mermaid
+flowchart TD
+  A[Node Execution] -->|fails| B[Retry 1]
+  B -->|fails| C[Retry 2]
+  C -->|fails| D[OnError handler]
+  A -->|succeeds| E[Next Node]
+```
+
+### 🧬 Agent Lifecycle
+
+```mermaid
+flowchart TD
+  A[Flow Initialized] --> B[Context Initialized]
+  B --> C[Nodes Executed]
+  C --> D[Transitions Evaluated]
+  D --> E[Flow Completed]
+  C -->|Error| F[Retry/Fail Handler]
+```
 
 ---
 
@@ -78,15 +115,9 @@ await new Runner().runFlow(flow, context);
 
 ---
 
-## 📚 Example Applications
+## 📖 Example Applications
 
 ### 🔮 Chatbot (`examples/chatbot.ts`)
-
-A conversational agent powered by OpenAI:
-
-- LLMNode generates response
-- DecisionNode routes based on keyword
-- ActionNode responds with data (like weather)
 
 ```bash
 npx ts-node examples/chatbot.ts
@@ -94,21 +125,11 @@ npx ts-node examples/chatbot.ts
 
 ### 🤝 Multi-agent system (`examples/multi-agent.ts`)
 
-Two agents communicating using a message bus:
-
-- Support agent triggers billing agent
-- Billing agent replies back
-
 ```bash
 npx ts-node examples/multi-agent.ts
 ```
 
 ### 🧪 Data pipeline (`examples/data-pipeline.ts`)
-
-Batch processing a list of users to flag eligibility:
-
-- BatchNode loops over users
-- Transformation stored in context
 
 ```bash
 npx ts-node examples/data-pipeline.ts
@@ -132,8 +153,6 @@ examples/         # Use cases
 
 ## 🧪 Tests
 
-Run all unit tests:
-
 ```bash
 npm test
 ```
@@ -146,11 +165,7 @@ npm test
 
 ## 📖 Documentation
 
-Full API reference available via TypeDoc:
-
 - 📘️ [View the Docs](https://EunixTech.github.io/ai-agent-flow)
-
-You can also build docs locally:
 
 ```bash
 npm run docs
@@ -159,7 +174,7 @@ open ./docs/index.html
 
 ---
 
-## 🔌 Extending the Framework
+## 🔐 Extending the Framework
 
 - Add your own nodes by extending `Node`
 - Plug in custom LLM providers (Anthropic, HuggingFace)
@@ -176,7 +191,7 @@ open ./docs/index.html
 
 ---
 
-## 🛝 Roadmap
+## 🚽 Roadmap
 
 | Phase         | Features                                |
 | ------------- | --------------------------------------- |
