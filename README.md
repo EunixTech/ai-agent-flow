@@ -1,6 +1,6 @@
 # ai-agent-flow
 
-[![Docs](https://img.shields.io/badge/docs-typedoc-blue.svg)](https://your-org.github.io/ai-agent-flow)
+[![Docs](https://img.shields.io/badge/docs-typedoc-blue.svg)](https://EunixTech.github.io/ai-agent-flow)
 
 **ai-agent-flow** is a TypeScript-based Node.js framework designed for building intelligent, modular, and observable workflows for AI agents. It helps you compose systems using simple, pluggable components with built-in AI capabilities.
 
@@ -57,19 +57,19 @@ We built `ai-agent-flow` because:
 ## 🧠 Quick Start Example
 
 ```ts
-import { Flow, Runner } from "./src/index";
-import { ActionNode } from "./src/nodes/action";
+import { Flow, Runner } from './src/index';
+import { ActionNode } from './src/nodes/action';
 
 const context = { conversationHistory: [], data: {}, metadata: {} };
 
-const hello = new ActionNode("hello", async () => "Hello");
-const world = new ActionNode("world", async () => "World");
+const hello = new ActionNode('hello', async () => 'Hello');
+const world = new ActionNode('world', async () => 'World');
 
-const flow = new Flow("greet")
+const flow = new Flow('greet')
   .addNode(hello)
   .addNode(world)
-  .setStartNode("hello")
-  .addTransition("hello", { action: "default", to: "world" });
+  .setStartNode('hello')
+  .addTransition('hello', { action: 'default', to: 'world' });
 
 await new Runner().runFlow(flow, context);
 ```
@@ -146,7 +146,7 @@ npm test
 
 Full API reference available via TypeDoc:
 
-- 📘 [View the Docs](https://your-org.github.io/ai-agent-flow)
+- 📘 [View the Docs](https://EunixTech.github.io/ai-agent-flow)
 
 You can also build docs locally:
 
@@ -188,7 +188,7 @@ open ./docs/index.html
 ## 🧰 Contributing
 
 ```bash
-git clone https://github.com/your-org/ai-agent-flow
+git clone https://github.com/EunixTech/ai-agent-flow
 npm install
 npm test
 ```

@@ -27,11 +27,11 @@
     "typescript",
     "node"
   ],
-  "author": "Rajesh Dhiman <your-email@example.com>",
+  "author": "Rajesh Dhiman <rajesh@eunix.tech>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/ai-agent-flow.git"
+    "url": "https://github.com/EunixTech/ai-agent-flow.git"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
