@@ -1,6 +1,6 @@
 {
   "name": "ai-agent-flow",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "A Node.js framework for AI agent workflows",
   "type": "commonjs",
   "main": "dist/cjs/index.js",
