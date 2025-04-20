@@ -2,9 +2,27 @@
   "name": "ai-agent-flow",
   "version": "1.0.0",
   "description": "A Node.js framework for AI agent workflows",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
+  "type": "commonjs",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./nodes/action": {
+      "import": "./dist/esm/nodes/action.js",
+      "require": "./dist/cjs/nodes/action.js",
+      "types": "./dist/types/nodes/action.d.ts"
+    },
+    "./types": {
+      "import": "./dist/esm/types.js",
+      "require": "./dist/cjs/types.js",
+      "types": "./dist/types/types.d.ts"
+    }
+  },
   "lint-staged": {
     "src/**/*.{ts,js}": [
       "prettier --write",
@@ -12,7 +30,7 @@
     ]
   },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
+    "build": "tsc && tsc -p tsconfig.cjs.json",
     "test": "jest",
     "docs:build": "typedoc",
     "docs:publish": "npm run docs:build && gh-pages -d docs",
@@ -35,7 +53,7 @@
   },
   "dependencies": {
     "dotenv": "^16.5.0",
-    "openai": "^4.0.0",
+    "openai": "^4.95.1",
     "prom-client": "^14.2.0",
     "redis": "^4.6.5",
     "winston": "^3.8.2"
