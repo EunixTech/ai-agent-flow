@@ -1,12 +1,14 @@
 // eslint.config.js
-import js from '@eslint/js';
-import ts from '@typescript-eslint/eslint-plugin';
-import parser from '@typescript-eslint/parser';
-import jest from 'eslint-plugin-jest';
+const js = require('@eslint/js');
+const ts = require('@typescript-eslint/eslint-plugin');
+const parser = require('@typescript-eslint/parser');
+const jest = require('eslint-plugin-jest');
+const prettier = require('eslint-config-prettier');
 
-export default [
+module.exports = [
   // Base JS recommended rules
   js.configs.recommended,
+  prettier,
 
   // TypeScript support
   {
