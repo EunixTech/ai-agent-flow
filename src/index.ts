@@ -1,18 +1,9 @@
-import { Context, NodeResult, Transition } from './types';
+import type { Context, NodeResult, Transition } from './types';
+import { Node } from './nodes/base';
+import { ActionNode } from './nodes/action';
 
-export abstract class Node {
-  protected id: string;
-
-  constructor(id: string) {
-    this.id = id;
-  }
-
-  getId(): string {
-    return this.id;
-  }
-
-  abstract execute(context: Context): Promise<NodeResult>;
-}
+export type { Context, NodeResult, Transition };
+export { Node, ActionNode };
 
 export class Flow {
   private id: string;
