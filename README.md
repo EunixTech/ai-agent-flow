@@ -27,112 +27,146 @@ npm install ai-agent-flow
 
 ## 💡 How It Works
 
-### 💡 Chatbot Example Flow (Click to expand)
+### Core Concepts
 
-```mermaid
-flowchart TD
-  A[Start] -->|default| B[DecisionNode]
-  B -->|weather| C[Weather ActionNode]
-  B -->|default| D[Fallback ActionNode]
+1. **Nodes**: The smallest executable units in your workflow
+   - `ActionNode`: Simple function-based nodes for quick tasks
+   - `LLMNode`: AI model interactions (OpenAI, etc.)
+   - Custom nodes: Extend the `Node` class for specific needs
+
+2. **Flows**: Connect nodes with action-based transitions
+3. **Context**: Shared memory between nodes
+4. **Runner**: Executes flows with retry capabilities
+
+### 🤖 Quick Start Example
+
+```typescript
+import { Flow, Runner, ActionNode } from 'ai-agent-flow';
+
+// Create nodes
+const greetNode = new ActionNode('greet', async () => 'Hello, World!');
+const timeNode = new ActionNode('time', async () => new Date().toISOString());
+
+// Create flow
+const flow = new Flow('demo')
+  .addNode(greetNode)
+  .addNode(timeNode)
+  .setStartNode('greet')
+  .addTransition('greet', { action: 'default', to: 'time' });
+
+// Run flow
+const context = {
+  conversationHistory: [],
+  data: {},
+  metadata: {}
+};
+
+const result = await new Runner().runFlow(flow, context);
+console.log(result); // { type: 'success', output: '2024-03-20T...' }
 ```
 
-- **Nodes**: Smallest executable units (call LLM, run logic)
-- **Flows**: Connect nodes with action-based transitions
-- **Context**: Shared memory between nodes with data, metadata, and history
-- **Runner**: Executes flows and handles retries/errors
-- **Agents**: Flows + state + messaging capabilities
-
-### 🤖 Agent Messaging Flow
+### 📊 Flow Visualization
 
 ```mermaid
 flowchart TD
-  A[Support Agent] -->|request| B[Billing Agent]
-  B -->|response| A
-```
-
-### 📦 Data Pipeline Processing
-
-```mermaid
-flowchart TD
-  A[BatchNode: Loop over users] --> B[ActionNode: Check eligibility]
-  B --> C[Store in context]
-```
-
-### ♻️ Retry Flow for Error Handling
-
-```mermaid
-flowchart TD
-  A[Node Execution] -->|fails| B[Retry 1]
-  B -->|fails| C[Retry 2]
-  C -->|fails| D[OnError handler]
-  A -->|succeeds| E[Next Node]
-```
-
-### 🧬 Agent Lifecycle
-
-```mermaid
-flowchart TD
-  A[Flow Initialized] --> B[Context Initialized]
-  B --> C[Nodes Executed]
-  C --> D[Transitions Evaluated]
-  D --> E[Flow Completed]
-  C -->|Error| F[Retry/Fail Handler]
+  A[greetNode] -->|default| B[timeNode]
+  B -->|default| C[End]
 ```
 
 ---
 
-## ✨ Philosophy
+## 🧩 Core Components
 
-We built `ai-agent-flow` because:
+### ActionNode
 
-- Most existing tools (LangChain, AutoGen) are too abstract or too complex for beginners
-- Developers want to **see, control, and debug** each step in their flow
-- We believe agents should be **modular, testable, and observable** — like LEGO blocks
+The `ActionNode` class provides a simple way to create nodes from async functions:
 
-`ai-agent-flow` gives you full control over how data flows, how AI responds, and how agents collaborate.
+```typescript
+// Simple action
+const simpleNode = new ActionNode('simple', async () => 'result');
 
----
+// With context
+const contextNode = new ActionNode('withContext', async (context) => {
+  const { data } = context;
+  return `Processed ${data.item}`;
+});
 
-## 🧠 Quick Start Example
+// With error handling
+const safeNode = new ActionNode('safe', async () => {
+  try {
+    return await someOperation();
+  } catch (error) {
+    throw new Error('Operation failed');
+  }
+});
+```
 
-```ts
-import { Flow, Runner } from './src/index';
-import { ActionNode } from './src/nodes/action';
+### Flow
 
-const context = { conversationHistory: [], data: {}, metadata: {} };
+The `Flow` class connects nodes and manages transitions:
 
-const hello = new ActionNode('hello', async () => 'Hello');
-const world = new ActionNode('world', async () => 'World');
+```typescript
+const flow = new Flow('myFlow')
+  .addNode(nodeA)
+  .addNode(nodeB)
+  .setStartNode('nodeA')
+  .addTransition('nodeA', { action: 'success', to: 'nodeB' });
+```
 
-const flow = new Flow('greet')
-  .addNode(hello)
-  .addNode(world)
-  .setStartNode('hello')
-  .addTransition('hello', { action: 'default', to: 'world' });
+### Runner
 
-await new Runner().runFlow(flow, context);
+The `Runner` class executes flows with retry capabilities:
+
+```typescript
+const runner = new Runner(
+  maxRetries = 3,    // Maximum retry attempts
+  retryDelay = 1000  // Delay between retries (ms)
+);
+
+const result = await runner.runFlow(flow, context);
 ```
 
 ---
 
-## 📖 Example Applications
+## 📊 Observability Example
 
-### 🔮 Chatbot (`examples/chatbot.ts`)
+```typescript
+import { Flow, Runner, ActionNode } from 'ai-agent-flow';
+import winston from 'winston';
+import client from 'prom-client';
 
-```bash
-npx ts-node examples/chatbot.ts
-```
+// Setup logging
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.simple(),
+  transports: [new winston.transports.Console()]
+});
 
-### 🤝 Multi-agent system (`examples/multi-agent.ts`)
+// Setup metrics
+const register = new client.Registry();
+const flowRunCounter = new client.Counter({
+  name: 'flow_runs_total',
+  help: 'Total number of flow runs'
+});
+register.registerMetric(flowRunCounter);
 
-```bash
-npx ts-node examples/multi-agent.ts
-```
+// Create observable node
+const node = new ActionNode('observable', async () => {
+  logger.info('Node executing...');
+  flowRunCounter.inc();
+  return 'Success!';
+});
 
-### 🧪 Data pipeline (`examples/data-pipeline.ts`)
+// Create and run flow
+const flow = new Flow('observable-flow')
+  .addNode(node)
+  .setStartNode('observable');
 
-```bash
-npx ts-node examples/data-pipeline.ts
+const result = await new Runner().runFlow(flow, {
+  conversationHistory: [],
+  data: {},
+  metadata: {}
+});
 ```
 
 ---
@@ -141,12 +175,11 @@ npx ts-node examples/data-pipeline.ts
 
 ```
 src/
-├── nodes/        # Node types like ActionNode, LLMNode
-├── stores/       # Redis or in-memory context stores
-├── providers/    # LLM clients (OpenAI)
-├── utils/        # Messaging utils
-├── index.ts      # Core framework (Node, Flow, Runner)
-examples/         # Use cases
+├── nodes/        # Node implementations (ActionNode, LLMNode)
+├── stores/       # Context storage implementations
+├── providers/    # External service integrations
+├── utils/        # Helper utilities
+└── index.ts      # Core exports
 ```
 
 ---
@@ -154,40 +187,65 @@ examples/         # Use cases
 ## 🧪 Tests
 
 ```bash
-npm test
+npm test         # Run all tests
+npm run coverage # Generate coverage report
 ```
-
-✔️ 100% coverage on statements, functions, and types.  
-✔️ Covers edge cases (invalid flows, retries, node failures).  
-✔️ All nodes and message flows tested.
 
 ---
 
 ## 📖 Documentation
 
-- 📘️ [View the Docs](https://EunixTech.github.io/ai-agent-flow)
+### API Documentation
 
+- [Nodes API](./docs/api/nodes.md) - Learn about the Node system and ActionNode
+- [Flow API](./docs/api/flow.md) - Understand Flow creation and management
+- [Runner API](./docs/api/runner.md) - Explore Flow execution and monitoring
+- [Complete API Reference](./docs/api/index.md) - Full API documentation
+
+### Examples
+
+Check out our [examples directory](./examples) for complete working examples:
+- Basic flows
+- Error handling
+- Data processing
+- API integration
+- Multi-step workflows
+
+Generate docs locally:
 ```bash
 npm run docs
-open ./docs/index.html
 ```
 
 ---
 
-## 🔐 Extending the Framework
+## 🔐 Extending
 
-- Add your own nodes by extending `Node`
-- Plug in custom LLM providers (Anthropic, HuggingFace)
-- Implement your own context stores (MongoDB, S3)
-- Replace `MessageBus` with Redis Pub/Sub or NATS
+### Custom Node Example
 
----
+```typescript
+import { Node, Context, NodeResult } from 'ai-agent-flow';
 
-## 📊 Observability
+export class CustomNode extends Node {
+  constructor(id: string) {
+    super(id);
+  }
 
-- ✅ Logging: via [Winston](https://github.com/winstonjs/winston)
-- ✅ Metrics: via [prom-client](https://github.com/siimon/prom-client)
-- ✅ Events: listen to `nodeExecuted`, `flowCompleted` on `Flow`
+  async execute(context: Context): Promise<NodeResult> {
+    try {
+      // Your custom logic here
+      return {
+        type: 'success',
+        output: 'result'
+      };
+    } catch (error) {
+      return {
+        type: 'error',
+        error: error instanceof Error ? error : new Error(String(error))
+      };
+    }
+  }
+}
+```
 
 ---
 
@@ -195,10 +253,10 @@ open ./docs/index.html
 
 | Phase         | Features                                |
 | ------------- | --------------------------------------- |
-| ✅ Now        | Full engine + nodes + OpenAI + examples |
-| 🕸️ Short-term | Anthropic support, CLI tool, Prometheus |
-| 🧠 Mid-term   | Visual editor, plugin API, Redis bus    |
-| 🚁️ Long-term | Distributed agents, LLM auto-routing    |
+| ✅ Now        | Core engine, ActionNode, observability  |
+| 🕸️ Short-term | LLMNode, CLI tool, more examples       |
+| 🧠 Mid-term   | Visual editor, plugin system            |
+| 🚁️ Long-term | Distributed agents, auto-routing        |
 
 ---
 
@@ -225,4 +283,5 @@ MIT © 2025 [Rajesh Dhiman](https://www.rajeshdhiman.in)
 Open issues or reach out here:  
 👉 [https://www.rajeshdhiman.in/contact](https://www.rajeshdhiman.in/contact)
 
-> "Build agent flows like LEGO blocks — simple, powerful, and easy to debug."
+> "Build agent flows like LEGO blocks — simple, powerful, and easy to debug."  
+ 
