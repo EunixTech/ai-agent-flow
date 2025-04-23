@@ -8,18 +8,17 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "nodenext",
-    "isolatedModules": true
+    "moduleResolution": "NodeNext",
+    "isolatedModules": true,
+    "rootDir": "./src",
+    "composite": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "checkJs": true
   },
-  "include": [
-    "src/**/*",
-    "tests/**/*",
-    "examples/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "coverage"
-  ]
-
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "coverage", "tests", "examples"]
 }

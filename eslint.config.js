@@ -16,7 +16,7 @@ module.exports = [
     languageOptions: {
       parser,
       parserOptions: {
-        project: './tsconfig.json',
+        project: ['./tsconfig.json', './tsconfig.test.json'],
         sourceType: 'module',
       },
     },
@@ -25,13 +25,21 @@ module.exports = [
     },
     rules: {
       'no-undef': 'off', // Let TS handle undefined
-      'no-unused-vars': 'warn',
+      'no-unused-vars': 'off', // Use TypeScript's unused vars check
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        'ignoreRestSiblings': true
+      }],
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn'
     },
   },
 
   // Jest support for test files
   {
-    files: ['tests/**/*.ts'],
+    files: ['tests/**/*.ts', 'examples/**/*.ts'],
     plugins: { jest },
     languageOptions: {
       ecmaVersion: 2021,
@@ -46,7 +54,12 @@ module.exports = [
       },
     },
     rules: {
-      // Add any Jest-specific rules if needed
+      '@typescript-eslint/no-unused-vars': 'off', // Tests often have unused variables
+      'jest/expect-expect': 'warn',
+      'jest/no-disabled-tests': 'warn',
+      'jest/no-focused-tests': 'error',
+      'jest/no-identical-title': 'error',
+      'jest/valid-expect': 'error'
     },
   },
 

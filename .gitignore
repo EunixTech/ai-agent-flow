@@ -1,41 +1,47 @@
-# Node modules
+# Build output
+dist/
+coverage/
+
+# Documentation
+docs/api/
+
+# Dependencies
 node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
 logs/
-*.log
-npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Build output
-dist/
-build/
-out/
-
 # TypeScript
 *.tsbuildinfo
 
-# Coverage
-coverage/
-.nyc_output/
-
 # Docs
-docs/api/
 docs/**/*.html
 !.docs/philosophy.html
 !.docs/examples.html
 
 # Test & IDE
-.env
-.DS_Store
-.vscode/
-.idea/
 *.swp
 
 # OS-specific
-Thumbs.db
 ehthumbs.db
 Desktop.ini
 

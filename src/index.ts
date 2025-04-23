@@ -1,4 +1,4 @@
-import { Context, NodeResult, Transition } from "./types";
+import { Context, NodeResult, Transition } from './types';
 
 export abstract class Node {
   protected id: string;
@@ -43,7 +43,7 @@ export class Flow {
   }
 
   async run(context: Context): Promise<NodeResult> {
-    if (!this.startNodeId) throw new Error("Start node not defined");
+    if (!this.startNodeId) throw new Error('Start node not defined');
     let currentNodeId = this.startNodeId;
 
     while (currentNodeId) {
@@ -51,29 +51,31 @@ export class Flow {
       if (!node) throw new Error(`Node ${currentNodeId} not found`);
 
       const result = await node.execute(context);
-      if (result.type === "error") return result;
+      if (result.type === 'error') return result;
 
-      const action = result.action || "default";
+      const action = result.action || 'default';
       const nextNodeId = this.transitions.get(currentNodeId)?.get(action);
       if (!nextNodeId) break;
 
       currentNodeId = nextNodeId;
     }
 
-    return { type: "success", output: "Flow completed" };
+    return { type: 'success', output: 'Flow completed' };
   }
 }
 
 export class Runner {
-  constructor(private maxRetries = 3, private retryDelay = 1000) {}
+  constructor(
+    private maxRetries = 3,
+    private retryDelay = 1000,
+  ) {}
 
   async runFlow(flow: Flow, context: Context): Promise<NodeResult> {
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
       const result = await flow.run(context);
-      if (result.type === "success") return result;
-      if (attempt < this.maxRetries)
-        await new Promise((res) => setTimeout(res, this.retryDelay));
+      if (result.type === 'success') return result;
+      if (attempt < this.maxRetries) await new Promise((res) => setTimeout(res, this.retryDelay));
     }
-    return { type: "error", error: new Error("Max retries reached") };
+    return { type: 'error', error: new Error('Max retries reached') };
   }
 }

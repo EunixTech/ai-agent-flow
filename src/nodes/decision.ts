@@ -1,20 +1,23 @@
-import { Node } from "../index";
-import { Context, NodeResult } from "../types";
+import { Node } from '../index';
+import { Context, NodeResult } from '../types';
 
 type ConditionFn = (context: Context) => string;
 
 export class DecisionNode extends Node {
-  constructor(id: string, private conditionFn: ConditionFn) {
+  constructor(
+    id: string,
+    private conditionFn: ConditionFn,
+  ) {
     super(id);
   }
 
   async execute(context: Context): Promise<NodeResult> {
     try {
       const action = this.conditionFn(context);
-      return { type: "success", output: action, action };
+      return { type: 'success', output: action, action };
     } catch (error) {
       return {
-        type: "error",
+        type: 'error',
         error: error instanceof Error ? error : new Error(String(error)),
       };
     }

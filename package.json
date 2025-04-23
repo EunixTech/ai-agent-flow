@@ -30,13 +30,25 @@
     ]
   },
   "scripts": {
-    "build": "tsc && tsc -p tsconfig.cjs.json",
+    "clean": "rm -rf dist coverage docs/api",
+    "build:types": "tsc -b tsconfig.json",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:dev": "npm run clean && npm run build:types && npm run build:esm && npm run build:cjs",
+    "build:prod": "npm run clean && tsc -b tsconfig.build.json && tsc -p tsconfig.cjs.json",
+    "build": "npm run build:dev",
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "docs:build": "typedoc",
     "docs:publish": "npm run docs:build && gh-pages -d docs",
     "prepare": "husky install",
-    "lint": "eslint src tests examples --ext .ts",
-    "format": "prettier --write ."
+    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" \"examples/**/*.ts\" --ext .ts",
+    "lint:fix": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" \"examples/**/*.ts\" --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\" \"examples/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\" \"examples/**/*.ts\"",
+    "type-check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "type-check:watch": "tsc --noEmit -p tsconfig.json --watch"
   },
   "keywords": [
     "ai",
@@ -53,10 +65,7 @@
   },
   "dependencies": {
     "dotenv": "^16.5.0",
-    "openai": "^4.95.1",
-    "prom-client": "^14.2.0",
-    "redis": "^4.6.5",
-    "winston": "^3.8.2"
+    "openai": "^4.95.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -64,6 +73,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.1",
     "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.24",
     "@typescript-eslint/eslint-plugin": "^8.30.1",
     "@typescript-eslint/parser": "^8.30.1",
     "@typhonjs-typedoc/typedoc-theme-dmt": "^0.3.1",
