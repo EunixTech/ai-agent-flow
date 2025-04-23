@@ -95,6 +95,7 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "assets"
   ]
 }

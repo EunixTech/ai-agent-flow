@@ -6,5 +6,13 @@
   "plugin": ["@typhonjs-typedoc/typedoc-theme-dmt"],
   "highlightLanguages": ["ts", "json", "bash", "mermaid"],
   "excludePrivate": true,
-  "includeVersion": true
+  "includeVersion": true,
+  "readme": "README.md",
+  "excludeExternals": true,
+  "excludeInternal": true,
+  "preserveWatchOutput": true,
+  "watch": false,
+  "categorizeByGroup": true,
+  "categoryOrder": ["Core", "Nodes", "Types", "Utils", "*"],
+  "sort": ["source-order"]
 }
