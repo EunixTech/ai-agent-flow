@@ -2,6 +2,28 @@ import { ActionNode } from '../src/nodes/action';
 import { DecisionNode } from '../src/nodes/decision';
 import { BatchNode, BatchItem, BatchResult } from '../src/nodes/batch';
 import { Context } from '../src/types';
+import { LLMNode } from '../src/nodes/llm';
+
+jest.mock('openai', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      chat: {
+        completions: {
+          create: jest.fn((params) => {
+            if (params.model === 'invalid-model') {
+              return Promise.reject(new Error('Invalid model configuration'));
+            }
+            return Promise.resolve({
+              choices: [
+                { message: { content: 'Mocked response from OpenAI' } },
+              ],
+            });
+          }),
+        },
+      },
+    };
+  });
+});
 
 describe('Nodes', () => {
   const context: Context = {
@@ -162,6 +184,50 @@ describe('Nodes', () => {
     expect(result.type).toBe('error');
     if (result.type === 'error') {
       expect(result.error.message).toBe('bad decision');
+    }
+  });
+});
+
+describe('LLMNode', () => {
+  it('executes successfully with valid context', async () => {
+    const node = new LLMNode('chat', (context) => {
+      if (!context.data.userInput) {
+        throw new Error('Invalid model configuration');
+      }
+      return `User input: ${context.data.userInput}`;
+    });
+
+    const context = {
+      conversationHistory: [],
+      data: { userInput: 'What is the weather today?' },
+      metadata: {},
+    };
+
+    const result = await node.execute(context);
+    expect(result.type).toBe('success');
+    if (result.type === 'success') {
+      expect(result.output).toBeDefined();
+    }
+  });
+
+  it('handles errors gracefully', async () => {
+    const node = new LLMNode('chat', (context) => {
+      if (!context.data.userInput) {
+        throw new Error('Invalid model configuration');
+      }
+      return `User input: ${context.data.userInput}`;
+    });
+
+    const context = {
+      conversationHistory: [],
+      data: {},
+      metadata: {},
+    };
+
+    const result = await node.execute(context);
+    expect(result.type).toBe('error');
+    if (result.type === 'error') {
+      expect(result.error.message).toBe('Invalid model configuration');
     }
   });
 });

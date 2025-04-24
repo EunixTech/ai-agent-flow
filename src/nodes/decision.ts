@@ -1,4 +1,4 @@
-import { Node } from '../index';
+import { Node } from './base';
 import { Context, NodeResult } from '../types';
 
 type ConditionFn = (context: Context) => string;

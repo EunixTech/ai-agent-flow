@@ -1,4 +1,4 @@
-import { Node } from '../index';
+import { Node } from './base';
 import { Context, NodeResult } from '../types';
 import OpenAI from 'openai';
 
@@ -10,6 +10,9 @@ export class LLMNode extends Node {
     private promptTemplate: (context: Context) => string,
   ) {
     super(id);
+    if (typeof promptTemplate !== 'function') {
+      throw new Error('promptTemplate must be a function');
+    }
   }
 
   async execute(context: Context): Promise<NodeResult> {
