@@ -37,6 +37,7 @@ npm install ai-agent-flow
 ### Core Concepts
 
 1. **Nodes**: The smallest executable units in your workflow
+
    - `ActionNode`: Simple function-based nodes for quick tasks
    - `LLMNode`: AI model interactions (OpenAI, etc.)
    - Custom nodes: Extend the `Node` class for specific needs
@@ -66,7 +67,7 @@ const flow = new Flow('demo')
 const context = {
   conversationHistory: [],
   data: {},
-  metadata: {}
+  metadata: {},
 };
 
 const result = await new Runner().runFlow(flow, context);
@@ -122,8 +123,8 @@ const chatNode = new LLMNode('chat', {
   model: 'gpt-3.5-turbo',
   messages: (context) => [
     { role: 'system', content: 'You are a helpful assistant.' },
-    { role: 'user', content: context.data.userInput }
-  ]
+    { role: 'user', content: context.data.userInput },
+  ],
 });
 ```
 
@@ -135,9 +136,11 @@ The `BatchNode` class processes multiple items in parallel:
 import { BatchNode } from 'ai-agent-flow/nodes/batch';
 
 const processItemsNode = new BatchNode('process-items', async (items, context) => {
-  const results = await Promise.all(items.map(async (item) => {
-    return { type: 'success', output: `Processed ${item}` };
-  }));
+  const results = await Promise.all(
+    items.map(async (item) => {
+      return { type: 'success', output: `Processed ${item}` };
+    }),
+  );
   return { type: 'success', output: results };
 });
 ```
@@ -254,6 +257,7 @@ npm run coverage # Generate coverage report
 ### Examples
 
 Check out our [examples directory](./examples) for complete working examples:
+
 - Basic flows
 - Error handling
 - Data processing
@@ -261,6 +265,7 @@ Check out our [examples directory](./examples) for complete working examples:
 - Multi-step workflows
 
 Generate docs locally:
+
 ```bash
 npm run docs
 ```
@@ -284,12 +289,12 @@ export class CustomNode extends Node {
       // Your custom logic here
       return {
         type: 'success',
-        output: 'result'
+        output: 'result',
       };
     } catch (error) {
       return {
         type: 'error',
-        error: error instanceof Error ? error : new Error(String(error))
+        error: error instanceof Error ? error : new Error(String(error)),
       };
     }
   }
@@ -300,12 +305,12 @@ export class CustomNode extends Node {
 
 ## 🚽 Roadmap
 
-| Phase         | Features                                |
-| ------------- | --------------------------------------- |
-| ✅ Now        | Core engine, ActionNode, observability  |
+| Phase         | Features                               |
+| ------------- | -------------------------------------- |
+| ✅ Now        | Core engine, ActionNode, observability |
 | 🕸️ Short-term | LLMNode, CLI tool, more examples       |
-| 🧠 Mid-term   | Visual editor, plugin system            |
-| 🚁️ Long-term | Distributed agents, auto-routing        |
+| 🧠 Mid-term   | Visual editor, plugin system           |
+| 🚁️ Long-term | Distributed agents, auto-routing       |
 
 ---
 
@@ -333,4 +338,3 @@ Open issues or reach out here:
 👉 [https://www.rajeshdhiman.in/contact](https://www.rajeshdhiman.in/contact)
 
 > "Build agent flows like LEGO blocks — simple, powerful, and easy to debug."
-

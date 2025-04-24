@@ -14,9 +14,7 @@ jest.mock('openai', () => {
               return Promise.reject(new Error('Invalid model configuration'));
             }
             return Promise.resolve({
-              choices: [
-                { message: { content: 'Mocked response from OpenAI' } },
-              ],
+              choices: [{ message: { content: 'Mocked response from OpenAI' } }],
             });
           }),
         },
@@ -67,7 +65,11 @@ describe('Nodes', () => {
         data: { items: ['a', 'b'] },
         metadata: {},
       };
-      const node = new BatchNode<string, number>('string-batch', 'items', async (item) => item.length);
+      const node = new BatchNode<string, number>(
+        'string-batch',
+        'items',
+        async (item) => item.length,
+      );
       const result = await node.execute(stringContext);
       expect(result.type).toBe('success');
       if (result.type === 'success') {
@@ -87,30 +89,26 @@ describe('Nodes', () => {
 
       const userContext: Context = {
         conversationHistory: [],
-        data: { 
+        data: {
           items: [
             { id: 1, name: 'Alice' },
-            { id: 2, name: 'Bob' }
-          ] as User[]
+            { id: 2, name: 'Bob' },
+          ] as User[],
         },
         metadata: {},
       };
 
-      const node = new BatchNode<User, UserResponse>(
-        'user-batch',
-        'items',
-        async (user) => ({
-          id: user.id,
-          greeting: `Hello, ${user.name}!`
-        })
-      );
+      const node = new BatchNode<User, UserResponse>('user-batch', 'items', async (user) => ({
+        id: user.id,
+        greeting: `Hello, ${user.name}!`,
+      }));
 
       const result = await node.execute(userContext);
       expect(result.type).toBe('success');
       if (result.type === 'success') {
         expect(result.output).toEqual([
           { id: 1, greeting: 'Hello, Alice!' },
-          { id: 2, greeting: 'Hello, Bob!' }
+          { id: 2, greeting: 'Hello, Bob!' },
         ]);
       }
     });

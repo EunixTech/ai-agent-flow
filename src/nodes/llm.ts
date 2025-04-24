@@ -32,6 +32,8 @@ export class LLMNode extends Node {
         messages: context.conversationHistory,
       });
 
+      console.log('OpenAI Response:', res);
+
       const content = res.choices[0]?.message?.content || '';
       context.conversationHistory.push({ role: 'assistant', content });
 

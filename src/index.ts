@@ -63,6 +63,12 @@ export class Flow {
 }
 
 export class Runner {
+  private updateHandler?: (update: { type: string; content: string }) => void;
+
+  onUpdate(handler: (update: { type: string; content: string }) => void): void {
+    this.updateHandler = handler;
+  }
+
   constructor(
     private maxRetries = 3,
     private retryDelay = 1000,
@@ -71,7 +77,12 @@ export class Runner {
   async runFlow(flow: Flow, context: Context): Promise<NodeResult> {
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
       const result = await flow.run(context);
-      if (result.type === 'success') return result;
+      if (result.type === 'success') {
+        if (this.updateHandler) {
+          this.updateHandler({ type: 'chunk', content: result.output as string });
+        }
+        return result;
+      }
       if (attempt < this.maxRetries) await new Promise((res) => setTimeout(res, this.retryDelay));
     }
     return { type: 'error', error: new Error('Max retries reached') };
