@@ -111,6 +111,7 @@
     "dist",
     "README.md",
     "LICENSE",
-    "assets"
+    "assets",
+    "nodes"
   ]
 }
