@@ -51,6 +51,7 @@ npm install ai-agent-flow
 ```typescript
 import { Flow, Runner, InMemoryContextStore } from 'ai-agent-flow';
 import { ActionNode } from 'ai-agent-flow/nodes/action';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 // Create nodes
 const greetNode = new ActionNode('greet', async () => 'Hello, World!');
@@ -65,7 +66,7 @@ const flow = new Flow('demo')
 
 // Run flow
 const context = {
-  conversationHistory: [],
+  conversationHistory: [] as ChatCompletionMessageParam[],
   data: {},
   metadata: {},
 };
@@ -302,13 +303,14 @@ The module should export a `flow` instance (and optionally a `context` object):
 ```typescript
 // flow.ts
 import { Flow, ActionNode } from 'ai-agent-flow';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 export const flow = new Flow('hello')
   .addNode(new ActionNode('hello', async () => 'Hi'))
   .setStartNode('hello');
 
 export const context = {
-  conversationHistory: [],
+  conversationHistory: [] as ChatCompletionMessageParam[],
   data: {},
   metadata: {},
 };
