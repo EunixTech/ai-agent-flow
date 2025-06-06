@@ -112,6 +112,34 @@ const results = await runner.runAgentFlows(
 );
 ```
 
+### Creating and Loading Plugins
+
+Extend `Runner` by providing plugin objects or paths when it is constructed. A plugin is a module exporting `{ name, setup(runner) }`.
+
+```javascript
+// logger-plugin.js
+module.exports = {
+  default: {
+    name: 'logger',
+    setup(runner) {
+      runner.onUpdate((u) => console.log(u));
+    },
+  },
+};
+```
+
+Load plugins using a file path or directory:
+
+```typescript
+import path from 'node:path';
+import { Runner } from 'ai-agent-flow';
+
+const runner = new Runner(3, 1000, undefined, [
+  path.join(__dirname, 'logger-plugin.js'),
+  path.join(__dirname, 'plugins'), // directory of plugins
+]);
+```
+
 ---
 
 ## 🧩 Core Components
@@ -286,6 +314,7 @@ npm run coverage # Generate coverage report
 - [Flow API](./docs/api/flow.md) - Understand Flow creation and management
 - [Runner API](./docs/api/runner.md) - Explore Flow execution and monitoring
 - [Complete API Reference](./docs/api/index.md) - Full API documentation
+- [Plugin Guide](./docs/plugins.md) - Write and load plugins
 
 ### Examples
 

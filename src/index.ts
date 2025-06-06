@@ -5,10 +5,14 @@ export * from './nodes/batch';
 export * from './types';
 export * from './utils/message-bus';
 export * from './store';
+export * from './plugins';
 
 import type { Context, NodeResult, Transition } from './types';
 import { Node } from './nodes/base';
 import { ActionNode } from './nodes/action';
+import type { Plugin } from './plugins';
+import { loadPluginSync, loadPluginsFromDirSync } from './plugins';
+import fs from 'fs';
 
 export type { Context, NodeResult, Transition };
 export { Node, ActionNode };
@@ -69,6 +73,7 @@ export class Flow {
 
 export class Runner {
   private updateHandler?: (update: { type: string; content: string }) => void;
+  private plugins: Plugin[] = [];
 
   onUpdate(handler: (update: { type: string; content: string }) => void): void {
     this.updateHandler = handler;
@@ -78,7 +83,39 @@ export class Runner {
     private maxRetries = 3,
     private retryDelay = 1000,
     private store?: import('./store').ContextStore,
-  ) {}
+    plugins: (Plugin | string)[] = [],
+  ) {
+    this.registerPlugins(plugins);
+  }
+
+  getPlugins(): Plugin[] {
+    return this.plugins;
+  }
+
+  registerPlugin(plugin: Plugin): void {
+    this.plugins.push(plugin);
+    try {
+      plugin.setup(this);
+    } catch {
+      // ignore plugin errors during setup
+    }
+  }
+
+  registerPlugins(plugins: (Plugin | string)[]): void {
+    for (const p of plugins) {
+      if (typeof p === 'string') {
+        if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
+          const loaded = loadPluginsFromDirSync(p);
+          loaded.forEach((pl) => this.registerPlugin(pl));
+        } else {
+          const plugin = loadPluginSync(p);
+          if (plugin) this.registerPlugin(plugin);
+        }
+      } else {
+        this.registerPlugin(p);
+      }
+    }
+  }
 
   async runFlow(flow: Flow, context: Context, contextId?: string): Promise<NodeResult> {
     if (this.store && contextId) {
