@@ -83,6 +83,12 @@ export class Runner {
         context = loaded;
       }
     }
+    // Attach update handler to context for streaming nodes
+    if (this.updateHandler) {
+      context.metadata.__updateHandler = this.updateHandler;
+    }
+
+
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
       const result = await flow.run(context);
       if (result.type === 'success') {
