@@ -2,7 +2,6 @@ import { ActionNode } from '../src/nodes/action';
 import { DecisionNode } from '../src/nodes/decision';
 import { BatchNode, BatchItem, BatchResult } from '../src/nodes/batch';
 import { Context } from '../src/types';
-import { LLMNode } from '../src/nodes/llm';
 
 jest.mock('openai', () => {
   return jest.fn().mockImplementation(() => {
@@ -22,6 +21,8 @@ jest.mock('openai', () => {
     };
   });
 });
+
+import { LLMNode } from '../src/nodes/llm';
 
 describe('Nodes', () => {
   const context: Context = {

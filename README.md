@@ -181,6 +181,7 @@ bus.subscribe('agentB', (senderId, message) => {
 bus.send('agentA', 'agentB', 'Hello');
 
 // Output: agentA says: Hello
+
 ```
 
 This is particularly useful for multi-agent systems where agents need to communicate asynchronously.

@@ -42,4 +42,26 @@ describe('Runner', () => {
       expect(result.error.message).toBe('Max retries reached');
     }
   });
+
+  it('calls update handler on success', async () => {
+    const node = new ActionNode('start', async () => 'done');
+    const flow = new Flow('simple').addNode(node).setStartNode('start');
+
+    const context: Context = {
+      conversationHistory: [],
+      data: {},
+      metadata: {},
+    };
+
+    const runner = new Runner();
+    const onUpdate = jest.fn();
+    runner.onUpdate(onUpdate);
+
+    await runner.runFlow(flow, context);
+
+    expect(onUpdate).toHaveBeenCalledWith({
+      type: 'chunk',
+      content: 'Flow completed',
+    });
+  });
 });
