@@ -220,6 +220,20 @@ const decideNode = new DecisionNode('decide', async (context) => {
 });
 ```
 
+### HttpNode
+
+`HttpNode` performs HTTP requests during a flow. Provide the request `url`,
+optional `method`, headers and body. Values can be static or derived from the
+current context.
+
+```typescript
+import { HttpNode } from 'ai-agent-flow/nodes/http';
+
+const fetchData = new HttpNode('fetch-data', {
+  url: 'https://api.example.com/data',
+});
+```
+
 ### MessageBus
 
 The `MessageBus` enables event-driven communication between agents. It allows agents to send and subscribe to messages asynchronously.
