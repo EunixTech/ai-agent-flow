@@ -1,7 +1,7 @@
 import { Flow, Runner } from '../src/index';
 import { ActionNode } from '../src/nodes/action';
 import { LLMNode } from '../src/nodes/llm';
-import { Context } from '../src/types';
+import { Context, NodeResult } from '../src/types';
 
 jest.mock('openai', () => {
   return jest.fn().mockImplementation(() => {
@@ -48,6 +48,7 @@ describe('Runner', () => {
     const result = await runner.runFlow(flow, context);
     expect(result.type).toBe('success');
   });
+
   it('returns error after max retries', async () => {
     const node = new ActionNode('fail', async () => {
       throw new Error('always fails');
@@ -91,6 +92,61 @@ describe('Runner', () => {
     });
   });
 
+  class TestFlow extends Flow {
+    constructor(private testOutput: unknown) {
+      super('test');
+      this.testOutput = testOutput;
+    }
+
+    async run(_: Context): Promise<NodeResult> {
+      return { type: 'success', output: this.testOutput };
+    }
+  }
+
+  it('stringifies object outputs for update handler', async () => {
+    const obj = { foo: 'bar' };
+    const flow = new TestFlow(obj);
+
+    const context: Context = {
+      conversationHistory: [],
+      data: {},
+      metadata: {},
+    };
+
+    const runner = new Runner();
+    const onUpdate = jest.fn();
+    runner.onUpdate(onUpdate);
+
+    await runner.runFlow(flow, context);
+
+    expect(onUpdate).toHaveBeenCalledWith({
+      type: 'chunk',
+      content: JSON.stringify(obj),
+    });
+  });
+
+  it('stringifies array outputs for update handler', async () => {
+    const arr = [1, 2, 3];
+    const flow = new TestFlow(arr);
+
+    const context: Context = {
+      conversationHistory: [],
+      data: {},
+      metadata: {},
+    };
+
+    const runner = new Runner();
+    const onUpdate = jest.fn();
+    runner.onUpdate(onUpdate);
+
+    await runner.runFlow(flow, context);
+
+    expect(onUpdate).toHaveBeenCalledWith({
+      type: 'chunk',
+      content: JSON.stringify(arr),
+    });
+  });
+
   it('handles streaming updates', async () => {
     const node = new LLMNode('stream', () => 'Hi');
     const flow = new Flow('streaming').addNode(node).setStartNode('stream');
@@ -107,3 +163,4 @@ describe('Runner', () => {
     expect(onUpdate).toHaveBeenLastCalledWith({ type: 'chunk', content: 'Flow completed' });
   });
 });
+

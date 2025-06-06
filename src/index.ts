@@ -88,12 +88,16 @@ export class Runner {
       context.metadata.__updateHandler = this.updateHandler;
     }
 
-
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
       const result = await flow.run(context);
       if (result.type === 'success') {
         if (this.updateHandler) {
-          this.updateHandler({ type: 'chunk', content: result.output as string });
+          const content =
+            typeof result.output === 'string' ? result.output : JSON.stringify(result.output);
+          this.updateHandler({ type: 'chunk', content });
+        }
+        if (this.store && contextId) {
+          await this.store.save(contextId, context);
         }
         if (this.store && contextId) {
           await this.store.save(contextId, context);
