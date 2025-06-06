@@ -4,6 +4,7 @@ export * from './nodes/decision';
 export * from './nodes/batch';
 export * from './types';
 export * from './utils/message-bus';
+export * from './store';
 
 import type { Context, NodeResult, Transition } from './types';
 import { Node } from './nodes/base';
@@ -72,13 +73,21 @@ export class Runner {
   constructor(
     private maxRetries = 3,
     private retryDelay = 1000,
+    private store?: import('./store').ContextStore,
   ) {}
 
-  async runFlow(flow: Flow, context: Context): Promise<NodeResult> {
+  async runFlow(flow: Flow, context: Context, contextId?: string): Promise<NodeResult> {
+    if (this.store && contextId) {
+      const loaded = await this.store.load(contextId);
+      if (loaded) {
+        context = loaded;
+      }
+    }
     // Attach update handler to context for streaming nodes
     if (this.updateHandler) {
       context.metadata.__updateHandler = this.updateHandler;
     }
+
 
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
       const result = await flow.run(context);
@@ -86,10 +95,20 @@ export class Runner {
         if (this.updateHandler) {
           this.updateHandler({ type: 'chunk', content: result.output as string });
         }
+        if (this.store && contextId) {
+          await this.store.save(contextId, context);
+        }
         return result;
       }
       if (attempt < this.maxRetries) await new Promise((res) => setTimeout(res, this.retryDelay));
     }
-    return { type: 'error', error: new Error('Max retries reached') };
+    const errorResult: NodeResult = {
+      type: 'error',
+      error: new Error('Max retries reached'),
+    };
+    if (this.store && contextId) {
+      await this.store.save(contextId, context);
+    }
+    return errorResult;
   }
 }

@@ -49,7 +49,7 @@ npm install ai-agent-flow
 ### 🤖 Quick Start Example
 
 ```typescript
-import { Flow, Runner } from 'ai-agent-flow';
+import { Flow, Runner, InMemoryContextStore } from 'ai-agent-flow';
 import { ActionNode } from 'ai-agent-flow/nodes/action';
 
 // Create nodes
@@ -70,7 +70,8 @@ const context = {
   metadata: {},
 };
 
-const result = await new Runner().runFlow(flow, context);
+const store = new InMemoryContextStore();
+const result = await new Runner(3, 1000, store).runFlow(flow, context, 'demo');
 console.log(result); // { type: 'success', output: '2024-03-20T...' }
 ```
 
@@ -80,6 +81,21 @@ console.log(result); // { type: 'success', output: '2024-03-20T...' }
 flowchart TD
   A[greetNode] -->|default| B[timeNode]
   B -->|default| C[End]
+```
+
+### Persisting Context
+
+Use a `ContextStore` to save and resume flows. Here we reuse the memory store:
+
+```typescript
+const store = new InMemoryContextStore();
+const runner = new Runner(3, 1000, store);
+
+// first run
+await runner.runFlow(flow, context, 'demo');
+
+// later resume using the same id
+await runner.runFlow(flow, {}, 'demo');
 ```
 
 ---
