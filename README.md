@@ -335,6 +335,12 @@ Then run:
 npx aaflow run ./flow.ts
 ```
 
+Inspect a flow without executing it:
+
+```bash
+npx aaflow inspect ./flow.ts
+```
+
 ---
 
 ## 🔐 Extending
