@@ -2,7 +2,14 @@ import { Node } from './base';
 import { Context, NodeResult } from '../types';
 import OpenAI from 'openai';
 
-const openai = new OpenAI();
+let openai: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (!openai) {
+    openai = new OpenAI();
+  }
+  return openai;
+}
 
 export class LLMNode extends Node {
   constructor(
@@ -27,7 +34,7 @@ export class LLMNode extends Node {
 
       context.conversationHistory.push({ role: 'user', content: prompt });
 
-      const res = await openai.chat.completions.create({
+      const res = await getOpenAI().chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: context.conversationHistory,
       });
