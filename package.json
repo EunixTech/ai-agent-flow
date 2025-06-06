@@ -32,6 +32,21 @@
       "require": "./dist/cjs/nodes/batch.js",
       "types": "./dist/types/nodes/batch.d.ts"
     },
+    "./store/memory": {
+      "import": "./dist/esm/store/memory.js",
+      "require": "./dist/cjs/store/memory.js",
+      "types": "./dist/types/store/memory.d.ts"
+    },
+    "./store/redis": {
+      "import": "./dist/esm/store/redis.js",
+      "require": "./dist/cjs/store/redis.js",
+      "types": "./dist/types/store/redis.d.ts"
+    },
+    "./store": {
+      "import": "./dist/esm/store/index.js",
+      "require": "./dist/cjs/store/index.js",
+      "types": "./dist/types/store/index.d.ts"
+    },
     "./types": {
       "import": "./dist/esm/types.js",
       "require": "./dist/cjs/types.js",
@@ -80,6 +95,7 @@
   },
   "dependencies": {
     "dotenv": "^16.5.0",
+    "ioredis": "^5.6.1",
     "openai": "^4.95.1"
   },
   "devDependencies": {
@@ -112,6 +128,7 @@
     "README.md",
     "LICENSE",
     "assets",
-    "nodes"
+    "nodes",
+    "store"
   ]
 }
