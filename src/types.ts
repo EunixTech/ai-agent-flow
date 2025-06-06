@@ -1,5 +1,7 @@
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
+
 export interface Context {
-  conversationHistory: { role: 'user' | 'assistant'; content: string }[];
+  conversationHistory: ChatCompletionMessageParam[];
   data: Record<string, unknown>;
   metadata: Record<string, unknown>;
 }

@@ -148,7 +148,9 @@ describe('Runner', () => {
   });
 
   it('handles streaming updates', async () => {
-    const node = new LLMNode('stream', () => 'Hi');
+    const node = new LLMNode('stream', {
+      messages: () => [{ role: 'user', content: 'Hi' }],
+    });
     const flow = new Flow('streaming').addNode(node).setStartNode('stream');
 
     const context: Context = { conversationHistory: [], data: {}, metadata: {} };
