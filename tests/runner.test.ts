@@ -164,5 +164,75 @@ describe('Runner', () => {
     expect(onUpdate).toHaveBeenNthCalledWith(2, { type: 'chunk', content: ' World' });
     expect(onUpdate).toHaveBeenLastCalledWith({ type: 'chunk', content: 'Flow completed' });
   });
+
+  it('runs multiple flows sequentially', async () => {
+    const events: string[] = [];
+
+    const flow1 = new Flow('f1').addNode(
+      new ActionNode('n1', async () => {
+        events.push('start1');
+        await new Promise((r) => setTimeout(r, 50));
+        events.push('end1');
+        return 'one';
+      }),
+    ).setStartNode('n1');
+
+    const flow2 = new Flow('f2').addNode(
+      new ActionNode('n2', async () => {
+        events.push('start2');
+        await new Promise((r) => setTimeout(r, 10));
+        events.push('end2');
+        return 'two';
+      }),
+    ).setStartNode('n2');
+
+    const ctx1: Context = { conversationHistory: [], data: {}, metadata: {} };
+    const ctx2: Context = { conversationHistory: [], data: {}, metadata: {} };
+
+    const runner = new Runner();
+    const results = await runner.runAgentFlows([flow1, flow2], { f1: ctx1, f2: ctx2 });
+
+    expect(events).toEqual(['start1', 'end1', 'start2', 'end2']);
+    expect(results.f1.type).toBe('success');
+    expect(results.f2.type).toBe('success');
+  });
+
+  it('runs multiple flows in parallel', async () => {
+    const events: string[] = [];
+
+    const flow1 = new Flow('p1').addNode(
+      new ActionNode('n1', async () => {
+        events.push('pstart1');
+        await new Promise((r) => setTimeout(r, 50));
+        events.push('pend1');
+        return 'one';
+      }),
+    ).setStartNode('n1');
+
+    const flow2 = new Flow('p2').addNode(
+      new ActionNode('n2', async () => {
+        events.push('pstart2');
+        await new Promise((r) => setTimeout(r, 10));
+        events.push('pend2');
+        return 'two';
+      }),
+    ).setStartNode('n2');
+
+    const ctx1: Context = { conversationHistory: [], data: {}, metadata: {} };
+    const ctx2: Context = { conversationHistory: [], data: {}, metadata: {} };
+
+    const runner = new Runner();
+    const results = await runner.runAgentFlows(
+      [flow1, flow2],
+      { p1: ctx1, p2: ctx2 },
+      true,
+    );
+
+    expect(events[0]).toBe('pstart1');
+    expect(events[1]).toBe('pstart2');
+    expect(events.slice(2)).toEqual(['pend2', 'pend1']);
+    expect(results.p1.type).toBe('success');
+    expect(results.p2.type).toBe('success');
+  });
 });
 

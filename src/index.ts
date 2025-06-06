@@ -23,6 +23,10 @@ export class Flow {
     this.id = id;
   }
 
+  getId(): string {
+    return this.id;
+  }
+
   addNode(node: Node): Flow {
     this.nodes.set(node.getId(), node);
     return this;
@@ -114,5 +118,30 @@ export class Runner {
       await this.store.save(contextId, context);
     }
     return errorResult;
+  }
+
+  async runAgentFlows(
+    flows: Flow[],
+    contextMap: Record<string, Context>,
+    parallel = false,
+  ): Promise<Record<string, NodeResult>> {
+    const execute = async (flow: Flow): Promise<[string, NodeResult]> => {
+      const id = flow.getId();
+      const ctx = contextMap[id] || { conversationHistory: [], data: {}, metadata: {} };
+      const result = await this.runFlow(flow, ctx, id);
+      return [id, result];
+    };
+
+    if (parallel) {
+      const entries = await Promise.all(flows.map((f) => execute(f)));
+      return Object.fromEntries(entries);
+    }
+
+    const results: Record<string, NodeResult> = {};
+    for (const flow of flows) {
+      const [id, res] = await execute(flow);
+      results[id] = res;
+    }
+    return results;
   }
 }
