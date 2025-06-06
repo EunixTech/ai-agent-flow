@@ -162,7 +162,7 @@ const decideNode = new DecisionNode('decide', async (context) => {
 
 ### MessageBus
 
-The `MessageBus` enables event-driven communication between agents. It allows agents to publish and subscribe to messages asynchronously.
+The `MessageBus` enables event-driven communication between agents. It allows agents to send and subscribe to messages asynchronously.
 
 #### Example Usage
 
@@ -172,15 +172,15 @@ import { MessageBus } from 'ai-agent-flow/utils/message-bus';
 // Create a new MessageBus instance
 const bus = new MessageBus();
 
-// Subscribe to a topic
-bus.subscribe('greetings', (message) => {
-  console.log(`Received message: ${message}`);
+// Subscribe agentB to receive messages
+bus.subscribe('agentB', (senderId, message) => {
+  console.log(`${senderId} says: ${message}`);
 });
 
-// Publish a message to the topic
-bus.publish('greetings', 'Hello, World!');
+// Send a message from agentA to agentB
+bus.send('agentA', 'agentB', 'Hello');
 
-// Output: Received message: Hello, World!
+// Output: agentA says: Hello
 ```
 
 This is particularly useful for multi-agent systems where agents need to communicate asynchronously.
