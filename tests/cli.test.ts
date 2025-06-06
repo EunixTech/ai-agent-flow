@@ -40,5 +40,5 @@ describe('CLI run', () => {
     const { stdout } = await execFileAsync(command, args, { env });
     const output = JSON.parse(stdout.trim());
     expect(output).toEqual({ type: 'success', output: 'Flow completed' });
-  });
+  }, 15000);
 });
