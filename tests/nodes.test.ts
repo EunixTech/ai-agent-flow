@@ -151,6 +151,20 @@ describe('Nodes', () => {
         expect(result.output).toEqual([]);
       }
     });
+
+    it('handles non-array items gracefully', async () => {
+      const ctx: Context = {
+        conversationHistory: [],
+        data: { items: 123 },
+        metadata: {},
+      };
+      const node = new BatchNode<number, number>('non-array', 'items', async (item) => item * 2);
+      const result = await node.execute(ctx);
+      expect(result.type).toBe('success');
+      if (result.type === 'success') {
+        expect(result.output).toEqual([]);
+      }
+    });
   });
 
   it('ActionNode handles error gracefully', async () => {

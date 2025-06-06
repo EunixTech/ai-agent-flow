@@ -204,8 +204,17 @@ export class BatchNode<TInput = unknown, TOutput = unknown> extends Node {
    */
   async execute(context: Context): Promise<NodeResult> {
     try {
-      const items = (context.data[this.itemsKey] || []) as BatchItem<TInput>[];
-      const results = await Promise.all(items.map((item) => this.processItem(item, context)));
+      const rawItems = context.data[this.itemsKey];
+
+      if (!Array.isArray(rawItems)) {
+        return { type: 'success', output: [] };
+      }
+
+      const items = rawItems as BatchItem<TInput>[];
+      const results = await Promise.all(
+        items.map((item) => this.processItem(item, context)),
+      );
+
       return { type: 'success', output: results };
     } catch (error) {
       return {
