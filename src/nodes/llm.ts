@@ -34,14 +34,25 @@ export class LLMNode extends Node {
 
       context.conversationHistory.push({ role: 'user', content: prompt });
 
-      const res = await getOpenAI().chat.completions.create({
+      const stream = await getOpenAI().chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: context.conversationHistory,
+        stream: true,
       });
 
-      console.log('OpenAI Response:', res);
+      let content = '';
+      const update = context.metadata.__updateHandler as
+        | ((update: { type: string; content: string }) => void)
+        | undefined;
 
-      const content = res.choices[0]?.message?.content || '';
+      for await (const chunk of stream) {
+        const token = chunk.choices[0]?.delta?.content;
+        if (token) {
+          content += token;
+          if (update) update({ type: 'chunk', content: token });
+        }
+      }
+
       context.conversationHistory.push({ role: 'assistant', content });
 
       return { type: 'success', output: content };

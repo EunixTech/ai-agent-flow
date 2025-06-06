@@ -12,6 +12,17 @@ jest.mock('openai', () => {
             if (params.model === 'invalid-model') {
               return Promise.reject(new Error('Invalid model configuration'));
             }
+            if (params.stream) {
+              const chunks = [
+                { choices: [{ delta: { content: 'Hello' } }] },
+                { choices: [{ delta: { content: ' World' } }] },
+              ];
+              return Promise.resolve({
+                [Symbol.asyncIterator]: async function* () {
+                  for (const c of chunks) yield c;
+                },
+              });
+            }
             return Promise.resolve({
               choices: [{ message: { content: 'Mocked response from OpenAI' } }],
             });
@@ -221,6 +232,28 @@ describe('LLMNode', () => {
     if (result.type === 'success') {
       expect(result.output).toBeDefined();
     }
+  });
+
+  it('streams tokens and updates history', async () => {
+    const node = new LLMNode('stream', () => 'Hi');
+    const ctx: Context = {
+      conversationHistory: [],
+      data: {},
+      metadata: { __updateHandler: jest.fn() },
+    };
+
+    const result = await node.execute(ctx);
+
+    expect(result.type).toBe('success');
+    if (result.type === 'success') {
+      expect(result.output).toBe('Hello World');
+    }
+
+    expect(ctx.metadata.__updateHandler).toHaveBeenCalledTimes(2);
+    expect(ctx.conversationHistory[1]).toEqual({
+      role: 'assistant',
+      content: 'Hello World',
+    });
   });
 
   it('handles errors gracefully', async () => {

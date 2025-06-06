@@ -1,6 +1,32 @@
 import { Flow, Runner } from '../src/index';
 import { ActionNode } from '../src/nodes/action';
+import { LLMNode } from '../src/nodes/llm';
 import { Context } from '../src/types';
+
+jest.mock('openai', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      chat: {
+        completions: {
+          create: jest.fn((params) => {
+            if (params.stream) {
+              const chunks = [
+                { choices: [{ delta: { content: 'Hello' } }] },
+                { choices: [{ delta: { content: ' World' } }] },
+              ];
+              return Promise.resolve({
+                [Symbol.asyncIterator]: async function* () {
+                  for (const c of chunks) yield c;
+                },
+              });
+            }
+            return Promise.resolve({ choices: [{ message: { content: 'Mocked' } }] });
+          }),
+        },
+      },
+    };
+  });
+});
 
 describe('Runner', () => {
   it('retries failing node and succeeds', async () => {
@@ -63,5 +89,21 @@ describe('Runner', () => {
       type: 'chunk',
       content: 'Flow completed',
     });
+  });
+
+  it('handles streaming updates', async () => {
+    const node = new LLMNode('stream', () => 'Hi');
+    const flow = new Flow('streaming').addNode(node).setStartNode('stream');
+
+    const context: Context = { conversationHistory: [], data: {}, metadata: {} };
+    const runner = new Runner();
+    const onUpdate = jest.fn();
+    runner.onUpdate(onUpdate);
+
+    await runner.runFlow(flow, context);
+
+    expect(onUpdate).toHaveBeenNthCalledWith(1, { type: 'chunk', content: 'Hello' });
+    expect(onUpdate).toHaveBeenNthCalledWith(2, { type: 'chunk', content: ' World' });
+    expect(onUpdate).toHaveBeenLastCalledWith({ type: 'chunk', content: 'Flow completed' });
   });
 });
