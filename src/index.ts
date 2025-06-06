@@ -99,6 +99,9 @@ export class Runner {
         if (this.store && contextId) {
           await this.store.save(contextId, context);
         }
+        if (this.store && contextId) {
+          await this.store.save(contextId, context);
+        }
         return result;
       }
       if (attempt < this.maxRetries) await new Promise((res) => setTimeout(res, this.retryDelay));
