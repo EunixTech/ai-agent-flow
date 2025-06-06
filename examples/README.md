@@ -117,7 +117,7 @@ npx ts-node examples/data-pipeline.ts
 ## 🔗 Want More?
 
 - Add a custom node? Extend the `Node` class.
-- Run multi-flows? Use `Runner.runAgentFlows()`.
+ - Run multi-flows? Use `Runner.runAgentFlows()` to execute several flows and collect the outputs.
 - Make it stateful? Use `RedisStore` for persistence.
 
 We’d love to see what flows you build! 🚀

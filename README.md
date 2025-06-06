@@ -99,6 +99,19 @@ await runner.runFlow(flow, context, 'demo');
 await runner.runFlow(flow, {}, 'demo');
 ```
 
+### Running Multiple Flows
+
+Execute several flows at once and receive a map of results:
+
+```typescript
+const runner = new Runner();
+const results = await runner.runAgentFlows(
+  [flowA, flowB],
+  { [flowA.getId()]: ctxA, [flowB.getId()]: ctxB },
+  true,
+);
+```
+
 ---
 
 ## 🧩 Core Components
