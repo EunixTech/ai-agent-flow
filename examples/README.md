@@ -90,6 +90,32 @@ flowchart TD
 
 ---
 
+## 🌐 4. HTTP Request Example
+
+**File:** `examples/http-request.ts`
+
+Fetches data from a REST API using `HttpNode`.
+
+### 🧱 Flow Structure:
+
+```mermaid
+flowchart TD
+  HTTP[HttpNode: fetch data] --> DONE[Flow completed]
+```
+
+### 💡 What it does:
+
+- Sends a GET request to a JSON placeholder API
+- Parses the JSON response
+- Prints the result to the console
+
+### ✨ Key Features:
+
+- Shows how to call external APIs within a flow
+- Supports dynamic URL and headers from context
+
+---
+
 ## 🛠 Tips for Customization
 
 You can modify any example to:
@@ -107,6 +133,7 @@ You can modify any example to:
 npx ts-node examples/chatbot.ts
 npx ts-node examples/multi-agent.ts
 npx ts-node examples/data-pipeline.ts
+npx ts-node examples/http-request.ts
 ```
 
 ✅ Use `.env` for API keys
