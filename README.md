@@ -130,7 +130,9 @@ const safeNode = new ActionNode('safe', async () => {
 
 ### LLMNode
 
-The `LLMNode` class provides AI model interactions:
+The `LLMNode` class provides AI model interactions. Construct it with
+`{ model?: string; messages: (ctx: Context) => ChatCompletionMessageParam[] }`.
+The `model` field defaults to `"gpt-3.5-turbo"`:
 
 ```typescript
 import { LLMNode } from 'ai-agent-flow/nodes/llm';

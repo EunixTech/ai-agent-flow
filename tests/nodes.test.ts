@@ -214,11 +214,15 @@ describe('Nodes', () => {
 
 describe('LLMNode', () => {
   it('executes successfully with valid context', async () => {
-    const node = new LLMNode('chat', (context) => {
-      if (!context.data.userInput) {
-        throw new Error('Invalid model configuration');
-      }
-      return `User input: ${context.data.userInput}`;
+    const node = new LLMNode('chat', {
+      messages: (context) => {
+        if (!context.data.userInput) {
+          throw new Error('Invalid model configuration');
+        }
+        return [
+          { role: 'user', content: `User input: ${context.data.userInput}` },
+        ];
+      },
     });
 
     const context = {
@@ -235,7 +239,9 @@ describe('LLMNode', () => {
   });
 
   it('streams tokens and updates history', async () => {
-    const node = new LLMNode('stream', () => 'Hi');
+    const node = new LLMNode('stream', {
+      messages: () => [{ role: 'user', content: 'Hi' }],
+    });
     const ctx: Context = {
       conversationHistory: [],
       data: {},
@@ -257,11 +263,15 @@ describe('LLMNode', () => {
   });
 
   it('handles errors gracefully', async () => {
-    const node = new LLMNode('chat', (context) => {
-      if (!context.data.userInput) {
-        throw new Error('Invalid model configuration');
-      }
-      return `User input: ${context.data.userInput}`;
+    const node = new LLMNode('chat', {
+      messages: (context) => {
+        if (!context.data.userInput) {
+          throw new Error('Invalid model configuration');
+        }
+        return [
+          { role: 'user', content: `User input: ${context.data.userInput}` },
+        ];
+      },
     });
 
     const context = {

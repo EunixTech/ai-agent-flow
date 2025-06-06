@@ -12,7 +12,11 @@ import { Context } from '../src/types';
     metadata: {},
   };
 
-  const llmNode = new LLMNode('llm', (ctx) => ctx.data.userQuestion as string);
+  const llmNode = new LLMNode('llm', {
+    messages: (ctx) => [
+      { role: 'user', content: ctx.data.userQuestion as string },
+    ],
+  });
 
   const decisionNode = new DecisionNode('route', (ctx) =>
     typeof ctx.data.userQuestion === 'string' && ctx.data.userQuestion.includes('weather')

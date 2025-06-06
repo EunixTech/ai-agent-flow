@@ -18,6 +18,18 @@ flowchart TD
   ROUTE -->|weather| WEATHER[ActionNode: fetch weather response]
 ```
 
+Example usage:
+
+```typescript
+const llmNode = new LLMNode('ask', {
+  messages: (ctx) => [
+    { role: 'user', content: ctx.data.userQuestion },
+  ],
+});
+```
+
+The `model` option defaults to `"gpt-3.5-turbo"`.
+
 ### 💡 What it does:
 
 - Accepts a question from user (e.g., "What’s the weather today?")
