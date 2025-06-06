@@ -173,14 +173,14 @@ import { MessageBus } from 'ai-agent-flow/utils/message-bus';
 const bus = new MessageBus();
 
 // Subscribe to a topic
-bus.subscribe('greetings', (message) => {
-  console.log(`Received message: ${message}`);
+bus.subscribe('greetings', (sender, message) => {
+  console.log(`Received from ${sender}: ${message}`);
 });
 
 // Publish a message to the topic
 bus.publish('greetings', 'Hello, World!');
 
-// Output: Received message: Hello, World!
+// Output: Received from system: Hello, World!
 ```
 
 This is particularly useful for multi-agent systems where agents need to communicate asynchronously.

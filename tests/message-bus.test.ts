@@ -10,4 +10,14 @@ describe('MessageBus', () => {
     });
     bus.send('agentA', 'agentB', 'hello');
   });
+
+  it('should publish messages without sender id', (done) => {
+    const bus = new MessageBus();
+    bus.subscribe('news', (senderId, message) => {
+      expect(senderId).toBe('system');
+      expect(message).toBe('update');
+      done();
+    });
+    bus.publish('news', 'update');
+  });
 });
