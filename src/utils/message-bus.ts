@@ -5,6 +5,16 @@ export class MessageBus extends EventEmitter {
     this.emit(receiverId, senderId, message);
   }
 
+  /**
+   * Alias for {@link send} to match documentation examples.
+   *
+   * @param receiverId - The id of the receiver agent
+   * @param message - The message payload
+   */
+  publish(receiverId: string, message: unknown): void {
+    this.send('system', receiverId, message);
+  }
+
   subscribe(receiverId: string, callback: (senderId: string, message: unknown) => void): void {
     this.on(receiverId, callback);
   }
