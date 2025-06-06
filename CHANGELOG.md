@@ -1,3 +1,20 @@
+# 1.4.0 (2025-06-06)
+
+### Features
+
+- add plugin system with dynamic loading
+- add Redis-backed message bus
+- add multi-flow runner via `runAgentFlows`
+- add CLI `inspect` command
+- add HttpNode for HTTP requests
+
+### Bug Fixes
+
+- fix HttpNode typing for typedoc
+- fix context type declarations
+
+---
+
 # 1.0.0 (2025-04-19)
 
 ### Bug Fixes
