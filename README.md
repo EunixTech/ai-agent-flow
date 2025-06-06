@@ -246,6 +246,18 @@ bus.send('agentA', 'agentB', 'Hello');
 
 This is particularly useful for multi-agent systems where agents need to communicate asynchronously.
 
+#### Choosing a Transport
+
+For single-process apps you can rely on the in-memory `MessageBus`. To enable cross-process messaging, switch to the `RedisMessageBus`:
+
+```typescript
+import { RedisMessageBus } from 'ai-agent-flow/utils/redis-message-bus';
+
+const bus = new RedisMessageBus({ url: 'redis://localhost:6379' });
+```
+
+Both buses expose the same API so you can pick one based on your environment.
+
 ---
 
 ## 📚 Documentation

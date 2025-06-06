@@ -4,6 +4,7 @@ export * from './nodes/decision';
 export * from './nodes/batch';
 export * from './types';
 export * from './utils/message-bus';
+export { RedisMessageBus } from './utils/redis-message-bus';
 export * from './store';
 export * from './plugins';
 
