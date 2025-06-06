@@ -21,11 +21,30 @@ export class HttpNode extends Node {
 
   constructor(id: string, opts: HttpNodeOptions) {
     super(id);
-    this.urlFn = typeof opts.url === 'function' ? opts.url : () => opts.url;
+
+    if (typeof opts.url === 'function') {
+      this.urlFn = opts.url;
+    } else {
+      const url = opts.url;
+      this.urlFn = () => url;
+    }
+
     this.method = opts.method || 'GET';
-    this.headersFn = typeof opts.headers === 'function' ? opts.headers : () => opts.headers || {};
+
+    if (typeof opts.headers === 'function') {
+      this.headersFn = opts.headers;
+    } else {
+      const headers = opts.headers || {};
+      this.headersFn = () => headers;
+    }
+
     if (opts.body !== undefined) {
-      this.bodyFn = typeof opts.body === 'function' ? opts.body : () => opts.body;
+      if (typeof opts.body === 'function') {
+        this.bodyFn = opts.body as (ctx: Context) => unknown;
+      } else {
+        const bodyVal = opts.body;
+        this.bodyFn = () => bodyVal;
+      }
     }
   }
 
@@ -35,7 +54,8 @@ export class HttpNode extends Node {
       const headers = this.headersFn(context);
       const bodyVal = this.bodyFn ? this.bodyFn(context) : undefined;
 
-      const init: RequestInit = { method: this.method, headers };
+      const initHeaders: Record<string, string> = { ...headers };
+      const init: RequestInit = { method: this.method, headers: initHeaders };
       if (bodyVal !== undefined) {
         if (
           typeof bodyVal === 'string' ||
@@ -47,9 +67,8 @@ export class HttpNode extends Node {
           init.body = bodyVal as any;
         } else {
           init.body = JSON.stringify(bodyVal);
-          if (!init.headers) init.headers = {};
-          if (!('Content-Type' in init.headers)) {
-            init.headers['Content-Type'] = 'application/json';
+          if (!('Content-Type' in initHeaders)) {
+            initHeaders['Content-Type'] = 'application/json';
           }
         }
       }
