@@ -1,6 +1,6 @@
 import { Flow, Runner } from '../src/index';
 import { ActionNode } from '../src/nodes/action';
-import { Context } from '../src/types';
+import { Context, NodeResult } from '../src/types';
 
 describe('Runner', () => {
   it('retries failing node and succeeds', async () => {
@@ -62,6 +62,61 @@ describe('Runner', () => {
     expect(onUpdate).toHaveBeenCalledWith({
       type: 'chunk',
       content: 'Flow completed',
+    });
+  });
+
+  class TestFlow extends Flow {
+    constructor(private testOutput: unknown) {
+      super('test');
+      this.testOutput = testOutput;
+    }
+
+    async run(_: Context): Promise<NodeResult> {
+      return { type: 'success', output: this.testOutput };
+    }
+  }
+
+  it('stringifies object outputs for update handler', async () => {
+    const obj = { foo: 'bar' };
+    const flow = new TestFlow(obj);
+
+    const context: Context = {
+      conversationHistory: [],
+      data: {},
+      metadata: {},
+    };
+
+    const runner = new Runner();
+    const onUpdate = jest.fn();
+    runner.onUpdate(onUpdate);
+
+    await runner.runFlow(flow, context);
+
+    expect(onUpdate).toHaveBeenCalledWith({
+      type: 'chunk',
+      content: JSON.stringify(obj),
+    });
+  });
+
+  it('stringifies array outputs for update handler', async () => {
+    const arr = [1, 2, 3];
+    const flow = new TestFlow(arr);
+
+    const context: Context = {
+      conversationHistory: [],
+      data: {},
+      metadata: {},
+    };
+
+    const runner = new Runner();
+    const onUpdate = jest.fn();
+    runner.onUpdate(onUpdate);
+
+    await runner.runFlow(flow, context);
+
+    expect(onUpdate).toHaveBeenCalledWith({
+      type: 'chunk',
+      content: JSON.stringify(arr),
     });
   });
 });

@@ -79,7 +79,9 @@ export class Runner {
       const result = await flow.run(context);
       if (result.type === 'success') {
         if (this.updateHandler) {
-          this.updateHandler({ type: 'chunk', content: result.output as string });
+          const content =
+            typeof result.output === 'string' ? result.output : JSON.stringify(result.output);
+          this.updateHandler({ type: 'chunk', content });
         }
         return result;
       }
