@@ -271,6 +271,37 @@ Generate docs locally:
 npm run docs
 ```
 
+### CLI Usage
+
+Run a flow module directly from the command line:
+
+```bash
+npx aaflow run path/to/flow.ts
+```
+
+The module should export a `flow` instance (and optionally a `context` object):
+
+```typescript
+// flow.ts
+import { Flow, ActionNode } from 'ai-agent-flow';
+
+export const flow = new Flow('hello')
+  .addNode(new ActionNode('hello', async () => 'Hi'))
+  .setStartNode('hello');
+
+export const context = {
+  conversationHistory: [],
+  data: {},
+  metadata: {},
+};
+```
+
+Then run:
+
+```bash
+npx aaflow run ./flow.ts
+```
+
 ---
 
 ## 🔐 Extending
