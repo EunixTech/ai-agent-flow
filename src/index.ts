@@ -2,6 +2,7 @@ export * from './nodes/action';
 export * from './nodes/llm';
 export * from './nodes/decision';
 export * from './nodes/batch';
+export * from './nodes/http';
 export * from './types';
 export * from './utils/message-bus';
 export { RedisMessageBus } from './utils/redis-message-bus';
